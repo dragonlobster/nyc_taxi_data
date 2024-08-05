@@ -53,18 +53,18 @@ For this data warehouse, we have a single Iceberg catalog called `demo`, and 3 d
 * `silver` - cleansed, deduplicated, well-defined and reliable schema - the data here is can be reliably used for analysis or exploration by business users including data analysts and data scientists. 
 * `gold` - refined datasets that may involve joining or aggregation of silver tables that will be used for dashboards, visualization, or high-level analysis.
 
-### Final Schema:
+### 1.3 Final Schema:
 
 ![schema](screenshots/schema.png)
 
-### Other Notes:
+### 1.4 Other Notes:
 * You can access the `minio` portal via http://localhost:9000 - the username is `admin` and the password is `password` (set up in `docker-compose.yaml`), purely for the sake of demonstration and simplicity purposes. This would not be the case in a production environment.
 
 * You can access the Spark portal via http://localhost:8080
 
 * You can access JupyterLab via http://localhost:8888
 
-## Data Ingestion
+## 2. Data Ingestion
 
 For data ingestion into the data warehouse, there are two main steps:
 
@@ -127,7 +127,7 @@ For this demo we have ingested the following data:
 * [Yellow Taxi Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) from 2024-01 to 2024-05 loaded into `bronze.nyc_yellow_tripdata`
 * [taxi_zone_lookup.csv](https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv) loaded into `bronze.taxi_zone_lookup`
 
-## Data Cleansing
+## 3. Data Cleansing
 
 Data cleansing should only occur once we have a good understanding of the raw data we are dealing with (explored it enough in the `bronze` layer).
 
@@ -170,7 +170,7 @@ the function `sanitize_columns` can be seen in `spark/notebooks/utils.py`.
 
 A similar process can be used for any data that needs to be cleaned in this data pipeline implementation.
 
-## Data Transformation
+## 4. Data Transformation
 
 When loading data into the `silver` layer, there should be a good understanding of the data and a well-defined schema to encourage consistency and reliability. We explicitly define the schema for the `yellow_tripdata`:
 
@@ -280,7 +280,7 @@ trip_year 	trip_month 	trip_weekday 	dayofweek_number 	pickup_borough 	average_t
 
 **Insight**: Seems like if you are a yellow taxi driver and driving on a Sunday, you can earn more by picking up people from Queens in New York!
 
-## Data Pipeline
+## 5. Data Pipeline
 
 The data pipeline in this implementation are run purely off the Jupyter Notebooks. This is due to the constraints of the local environment and time. For example - I could provision Apache Airflow, Dagster, or Prefect as a job orchestrator in our `docker-compose.yaml`, but that would eat up a lot more computing resources (than already being consumed).
 
@@ -315,7 +315,7 @@ Our data pipelines consist of 3 steps:
 
 This is a scalable design - Steps 2 and 3 are completely optional. For example, say we were to load 400 new data files. It would be difficult to explicilty define the schema for all 400 tables. Instead, we should load them into the `bronze` layer indiscriminately, explore, and finally come up with a conclusive set of data that will be used for an actual business use case. Say we nail down the business case to 10 tables. Then, we can simply proceed with steps 2 and 3 for these 10 tables.
 
-## Conclusion
+## 6. Conclusion
 
 I want to highlight the challenges for this assignment:
 
