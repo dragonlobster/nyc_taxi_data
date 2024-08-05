@@ -7,13 +7,13 @@ It is fully runnable on a local machine via `docker`.
 Prerequisites:
 * Docker daemon is running
 * The following ports will need to be unoccupied:
-    * `8888`
-    * `8080`
-    * `10000`
-    * `10001`
-    * `8181`
-    * `9001`
-    * `9000`
+     `8888`,
+     `8080`,
+     `10000`,
+     `10001`,
+     `8181`,
+     `9001`,
+     `9000`,
     
 ### 1.1 Quickstart
 1. Docker compose up - note that it may take a while (up to 10 minutes) to pull and build the images.
@@ -24,18 +24,22 @@ docker compose up --build -d
 2. Once the containers are up, wait 1-2 minutes for services to start up, then go to Jupyter Lab from your web browser: http://localhost:8888/lab
 
 3. Locate `1. Taxi_Zone_Lookup.ipynb`, right click on it and click `Create Notebook Job`
-![create_notebook_job](screenshots/notebook_job.png)
+
+![create_notebook_job](screenshots/notebook_job.png)<!-- not a figure -->
 
 4. Ensure that `Run job with input folder` and `Run now` is selected, then hit `Create`
-![start_taxi_job](screenshots/taxi_job.png)
+
+![start_taxi_job](screenshots/taxi_job.png)<!-- not a figure -->
 
 5. Wait for the job to be completed
-![wait](screenshots/wait.png)
+
+![wait](screenshots/wait.png)<!-- not a figure -->
 
 6. Repeat steps 3, 4, and 5 for `2. Yellow_TripData.ipynb`. Note to only start this job after `1. Taxi_Zone_Lookup.ipynb` job has finished.
 
 7. Explore the data via SQL, or PySpark via `Explore.ipynb`
-![explore](screenshots/explore.png)
+
+![explore](screenshots/explore.png)<!-- not a figure -->
 
 ### 1.2 Architecture
 
@@ -55,7 +59,7 @@ For this data warehouse, we have a single Iceberg catalog called `demo`, and 3 d
 
 ### 1.3 Final Schema:
 
-![schema](screenshots/schema.png)
+![schema](screenshots/schema.png)<!-- not a figure -->
 
 ### 1.4 Other Notes:
 * You can access the `minio` portal via http://localhost:9000 - the username is `admin` and the password is `password` (set up in `docker-compose.yaml`), purely for the sake of demonstration and simplicity purposes. This would not be the case in a production environment.
@@ -143,26 +147,26 @@ In our case we are handling taxi trip data, and when exploring the data have not
 therefore, we filter these records out and deem them invalid (in prepration on loading them to the `silver` layer) in `spark/notebooks/2. Yellow_TripData.ipynb`:
 ```python
 bronze_transform = bronze_transform.filter(~((f.col("trip_distance") <= 0) 
-                                             | (f.col("passenger_count").isNull()) 
-                                             | (f.col("passenger_count") <= 0)
-                                             | (f.col("total_amount") <= 0)
-                                             | (f.col("dropoff_timestamp") <= f.col("pickup_timestamp"))
-                                             | (f.day(f.col("dropoff_timestamp")) - f.day(f.col("pickup_timestamp")) > 1)
-                                             | (f.year(f.col("pickup_timestamp")) < 2024)
-                                            ))
+| (f.col("passenger_count").isNull()) 
+| (f.col("passenger_count") <= 0)
+| (f.col("total_amount") <= 0)
+| (f.col("dropoff_timestamp") <= f.col("pickup_timestamp"))
+| (f.day(f.col("dropoff_timestamp")) - f.day(f.col("pickup_timestamp")) > 1)
+| (f.year(f.col("pickup_timestamp")) < 2024)
+))
 ```
 
 Finally, we sanitize the column names by making them more descriptive and use snake case rather than camel case
 
 ```python
 columns_to_rename = {"VendorID": "vendor_id", 
-                     "RatecodeID": "rate_code_id", 
-                     "PULocationID": "pickup_location_id", 
-                     "DOLocationID": "dropoff_location_id", 
-                     "Airport_fee": "airport_fee",
-                     "tpep_pickup_datetime": "pickup_timestamp",
-                     "tpep_dropoff_datetime": "dropoff_timestamp",
-                    }
+    "RatecodeID": "rate_code_id", 
+    "PULocationID": "pickup_location_id", 
+    "DOLocationID": "dropoff_location_id", 
+    "Airport_fee": "airport_fee",
+    "tpep_pickup_datetime": "pickup_timestamp",
+    "tpep_dropoff_datetime": "dropoff_timestamp",
+}
 
 bronze_transform = sanitize_columns(bronze_transform, columns_to_rename)
 ```
