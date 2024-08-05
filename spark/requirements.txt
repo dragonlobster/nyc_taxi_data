@@ -1,0 +1,8 @@
+jupyter==1.0.0
+pyiceberg[pyarrow,duckdb,pandas]==0.6.1
+jupysql==0.10.5
+matplotlib==3.9.1
+scipy==1.14.0
+duckdb-engine==0.13.0
+minio==7.2.7
+jupyter-scheduler==2.7.1
